@@ -1,0 +1,17 @@
+{
+  "name": "Путь Сайтамы",
+  "short_name": "Сайтама",
+  "description": "100 отжиманий, 100 приседаний, 100 прыжков на скакалке и 10 км бега за одну тренировку",
+  "lang": "ru",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FBF8EF",
+  "theme_color": "#F2C230",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

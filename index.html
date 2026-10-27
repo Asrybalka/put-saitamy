@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#F2C230">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Сайтама">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Путь Сайтамы</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Russo+One&family=Golos+Text:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: one column, phone-first. Hero band with overall rank → 4 goal tiles → log form → progress chart → history. */
+:root {
+  --paper: #FBF8EF;
+  --surface: #FFFFFF;
+  --ink: #1B1A16;
+  --muted: #6E6A5C;
+  --line: #E6E0CF;
+  --hero: #F2C230;      /* костюм */
+  --hero-ink: #1B1A16;
+  --cape: #D9362B;      /* перчатки и плащ */
+  --cape-soft: #FBE3DF;
+  --good: #2F8A4C;
+  --track: #EFE9D8;
+  --f-display: "Russo One", "Arial Black", Impact, sans-serif;
+  --f-body: "Golos Text", -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-num: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #141310; --surface: #1D1C18; --ink: #F3EEDF; --muted: #A39E8C;
+    --line: #2F2D26; --hero: #F2C230; --hero-ink: #1B1A16; --cape: #F0594D;
+    --cape-soft: #3A1F1C; --good: #5BC07A; --track: #2A2822; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #141310; --surface: #1D1C18; --ink: #F3EEDF; --muted: #A39E8C;
+  --line: #2F2D26; --hero: #F2C230; --hero-ink: #1B1A16; --cape: #F0594D;
+  --cape-soft: #3A1F1C; --good: #5BC07A; --track: #2A2822; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+body { margin: 0; }
+[hidden] { display: none !important; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--hero); }
+body { background: var(--paper); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.45; }
+.wrap { max-width: 560px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 48px; display: flex; flex-direction: column; gap: 28px; }
+
+/* Hero */
+.hero { background: var(--hero); color: var(--hero-ink); }
+.hero-in { max-width: 560px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 22px 20px; display: grid; gap: 14px; }
+.hero h1 { font-family: var(--f-display); font-weight: 400; font-size: clamp(30px, 9vw, 42px); line-height: 1; margin: 0; letter-spacing: .01em; text-wrap: balance; }
+.hero-sub { font-size: 13px; margin: 0; opacity: .8; }
+.rank-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.rank { display: grid; gap: 2px; }
+.rank small { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; opacity: .7; }
+.rank b { font-family: var(--f-display); font-weight: 400; font-size: 22px; }
+.total { font-family: var(--f-num); font-weight: 700; font-size: 34px; line-height: 1; font-variant-numeric: tabular-nums; }
+.total span { font-size: 16px; opacity: .7; }
+.bigbar { height: 12px; background: rgba(27,26,22,.15); border-radius: 6px; overflow: hidden; }
+.bigbar i { display: block; height: 100%; background: var(--hero-ink); border-radius: 6px; width: 0; transition: width .6s ease; }
+.hero-meta { display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px; font-weight: 600; }
+.hero-meta span { display: inline-flex; gap: 6px; align-items: baseline; }
+.hero-meta em { font-style: normal; font-family: var(--f-num); font-weight: 700; }
+
+h2 { font-family: var(--f-display); font-weight: 400; font-size: 20px; margin: 0 0 12px; letter-spacing: .01em; }
+.label { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; color: var(--muted); }
+
+/* Goal tiles */
+.goals { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.goal { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px; display: grid; gap: 10px; min-width: 0; }
+.goal.done { border-color: var(--good); }
+.goal-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.goal-name { font-weight: 700; font-size: 14px; }
+.badge { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 3px 7px; border-radius: 999px; background: var(--track); color: var(--muted); white-space: nowrap; }
+.badge.full { background: var(--good); color: var(--surface); }
+.goal.done .badge { background: var(--good); color: var(--surface); }
+.goal-val { font-family: var(--f-num); font-weight: 700; font-size: 28px; line-height: 1; font-variant-numeric: tabular-nums; }
+.goal-val small { font-size: 13px; color: var(--muted); font-weight: 500; }
+.bar { height: 8px; background: var(--track); border-radius: 4px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--cape); border-radius: 4px; width: 0; transition: width .6s ease; }
+.goal.done .bar i { background: var(--good); }
+.goal-foot { font-size: 12px; color: var(--muted); display: flex; justify-content: space-between; gap: 6px; }
+
+/* Form */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px; }
+form { display: grid; gap: 14px; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.field { display: grid; gap: 5px; min-width: 0; }
+.field label { font-size: 13px; font-weight: 600; }
+.field label span { color: var(--muted); font-weight: 400; }
+input, textarea { font: inherit; font-size: 17px; width: 100%; min-width: 0; padding: 11px 12px; border-radius: 10px; border: 1.5px solid var(--line); background: var(--paper); color: var(--ink); }
+input[type="number"], #fRun { font-family: var(--f-num); font-weight: 700; }
+textarea { font-size: 15px; resize: vertical; min-height: 44px; }
+input:focus-visible, textarea:focus-visible, button:focus-visible { outline: 3px solid var(--hero); outline-offset: 1px; border-color: var(--ink); }
+.hint { font-size: 12px; color: var(--muted); margin: 0; }
+.btn { font: inherit; font-weight: 700; font-size: 16px; border: 0; border-radius: 12px; padding: 14px 16px; cursor: pointer; background: var(--cape); color: #fff; }
+.btn:active { transform: translateY(1px); }
+.btn[disabled] { opacity: .5; cursor: default; }
+.msg { font-size: 13px; font-weight: 600; min-height: 1.2em; margin: 0; }
+.msg.ok { color: var(--good); }
+.msg.err { color: var(--cape); }
+
+/* Chart */
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.tab { font: inherit; font-size: 13px; font-weight: 600; padding: 7px 12px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.tab[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.chart svg { width: 100%; height: auto; display: block; }
+.chart text { font-family: var(--f-num); font-size: 11px; fill: var(--muted); }
+.empty { text-align: center; color: var(--muted); padding: 24px 8px; font-size: 14px; }
+
+/* History */
+.hist { display: grid; gap: 8px; }
+.entry { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; display: grid; gap: 8px; }
+.entry-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.entry-date { font-weight: 700; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: 13px; padding: 4px 9px; border-radius: 8px; background: var(--track); font-family: var(--f-num); font-weight: 500; }
+.chip.pr { background: var(--cape-soft); color: var(--cape); font-weight: 700; }
+.note { font-size: 13px; color: var(--muted); margin: 0; }
+.del { font: inherit; font-size: 12px; font-weight: 600; background: none; border: 1px solid var(--line); color: var(--muted); border-radius: 8px; padding: 5px 9px; cursor: pointer; }
+.del.arm { border-color: var(--cape); color: var(--cape); }
+.more { font: inherit; font-weight: 600; background: none; border: 1.5px solid var(--line); color: var(--ink); border-radius: 10px; padding: 10px; cursor: pointer; }
+.store { font-size: 12px; color: var(--muted); text-align: center; margin: 0; }
+@media (prefers-reduced-motion: reduce) { .bar i, .bigbar i { transition: none; } }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <h1>Путь Сайтамы</h1>
+      <p class="hero-sub">За одну тренировку: 100 отжиманий, 100 приседаний, 100 прыжков на скакалке и 10 км бега</p>
+    </div>
+    <div class="rank-row">
+      <div class="rank"><small>Твой класс</small><b id="rank">Новичок</b></div>
+      <div class="rank" style="text-align:right"><small>Лучшая тренировка</small><div class="total" id="total">0<span>%</span></div></div>
+    </div>
+    <div class="bigbar" aria-hidden="true"><i id="totalBar"></i></div>
+    <div class="hero-meta">
+      <span>Тренировок: <em id="mCount">0</em></span>
+      <span>Серия дней: <em id="mStreak">0</em></span>
+      <span>Последняя: <em id="mLast">—</em></span>
+      <span>Полных дней: <em id="mFull">0</em></span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section style="margin-top:20px">
+    <h2>Цели на одну тренировку</h2>
+    <div class="goals" id="goals"></div>
+  </section>
+
+  <section>
+    <h2>Записать тренировку</h2>
+    <div class="card">
+      <form id="form" novalidate>
+        <div class="field">
+          <label for="fDate">Дата</label>
+          <input type="date" id="fDate" required>
+        </div>
+        <div class="row2">
+          <div class="field"><label for="fPush">Отжимания <span>раз</span></label><input type="number" id="fPush" inputmode="numeric" min="0" max="1000" placeholder="0"></div>
+          <div class="field"><label for="fSquat">Приседания <span>раз</span></label><input type="number" id="fSquat" inputmode="numeric" min="0" max="1000" placeholder="0"></div>
+          <div class="field"><label for="fRope">Скакалка <span>прыжков</span></label><input type="number" id="fRope" inputmode="numeric" min="0" max="5000" placeholder="0"></div>
+          <div class="field"><label for="fRun">Бег <span>км</span></label><input type="text" id="fRun" inputmode="decimal" autocomplete="off" pattern="[0-9]*[.,]?[0-9]*" placeholder="0,0"></div>
+        </div>
+        <p class="hint">Пиши, сколько всего сделал за эту тренировку. Пустые поля считаются как ноль: путь пройден, когда в одной тренировке выполнены все четыре цели.</p>
+        <button class="btn" type="submit" id="save">Сохранить тренировку</button>
+        <p class="msg" id="msg" role="status"></p>
+      </form>
+    </div>
+  </section>
+
+  <section>
+    <h2>Прогресс</h2>
+    <div class="tabs" id="tabs"></div>
+    <div class="card chart" id="chart"></div>
+  </section>
+
+  <section>
+    <h2>История</h2>
+    <div class="hist" id="hist"></div>
+  </section>
+
+  <section>
+    <h2>Резервная копия</h2>
+    <div class="card" style="display:grid;gap:12px">
+      <p class="hint" style="font-size:13px">Сохраняй копию раз в неделю. Если сменишь телефон или очистишь браузер, загрузи её обратно — история вернётся.</p>
+      <div class="row2">
+        <button class="more" type="button" id="bExport">Сохранить копию</button>
+        <button class="more" type="button" id="bImport">Загрузить из копии</button>
+      </div>
+      <input type="file" id="bFile" accept=".json,application/json" hidden>
+      <p class="msg" id="bMsg" role="status"></p>
+    </div>
+  </section>
+
+  <p class="store" id="store">Загружаю данные…</p>
+</main>
+
+<script>
+const EX = [
+  { key: "push",  name: "Отжимания",  unit: "раз",  goal: 100, dec: 0 },
+  { key: "squat", name: "Приседания", unit: "раз",  goal: 100, dec: 0 },
+  { key: "rope",  name: "Скакалка",   unit: "раз", goal: 100, dec: 0 },
+  { key: "run",   name: "Бег",        unit: "км",   goal: 10,  dec: 1 },
+];
+const RANKS = [
+  [0,   "Новичок"],
+  [25,  "Герой класса C"],
+  [50,  "Герой класса B"],
+  [75,  "Герой класса A"],
+  [100, "Герой класса S"],
+];
+const LS_KEY = "saitama-path-v1";
+let sessions = [];        // {id, date:"YYYY-MM-DD", push, squat, rope, run, runTime, note, created}
+let col = null;           // db collection when available
+let chartEx = "all";
+let showAll = false;
+let armed = null;
+
+const $ = (id) => document.getElementById(id);
+const fmt = (v, dec) => v == null ? "—" : (dec ? (Math.round(v * 10) / 10).toLocaleString("ru-RU", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : String(Math.round(v)));
+const today = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); };
+const dLabel = (s) => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d).toLocaleDateString("ru-RU", { day: "numeric", month: "short" }); };
+const dLong = (s) => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d).toLocaleDateString("ru-RU", { weekday: "short", day: "numeric", month: "long" }); };
+const sorted = () => [...sessions].sort((a, b) => a.date === b.date ? (a.created || 0) - (b.created || 0) : a.date < b.date ? -1 : 1);
+const num = (v) => typeof v === "number" && isFinite(v) && v > 0 ? v : null;
+
+function sessionPct(s) { return Math.round(EX.reduce((a, e) => a + Math.min(100, ((num(s[e.key]) || 0) / e.goal) * 100), 0) / EX.length); }
+function isFull(s) { return EX.every(e => (num(s[e.key]) || 0) >= e.goal); }
+function bestSession() { let b = null; for (const s of sessions) if (!b || sessionPct(s) > sessionPct(b)) b = s; return b; }
+function best(key) { let b = null; for (const s of sessions) { const v = num(s[key]); if (v != null && (b == null || v > b)) b = v; } return b; }
+function last(key) { const arr = sorted().filter(s => num(s[key]) != null); return arr.length ? arr[arr.length - 1][key] : null; }
+
+function streak() {
+  const days = new Set(sessions.map(s => s.date));
+  if (!days.size) return 0;
+  let d = new Date(today() + "T12:00:00");
+  if (!days.has(today())) d.setDate(d.getDate() - 1); // вчерашняя серия ещё жива
+  let n = 0;
+  while (days.has(d.toISOString().slice(0, 10))) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+
+function renderHero() {
+  const bs = bestSession();
+  const total = bs ? sessionPct(bs) : 0;
+  $("total").innerHTML = total + "<span>%</span>";
+  $("totalBar").style.width = total + "%";
+  let r = RANKS[0][1]; for (const [t, n] of RANKS) if (total >= t) r = n;
+  $("rank").textContent = r;
+  $("mCount").textContent = sessions.length;
+  $("mStreak").textContent = streak();
+  const s = sorted(); $("mLast").textContent = s.length ? dLabel(s[s.length - 1].date) + " · " + sessionPct(s[s.length - 1]) + "%" : "—";
+  $("mFull").textContent = sessions.filter(isFull).length;
+}
+
+function renderGoals() {
+  $("goals").innerHTML = EX.map(e => {
+    const b = best(e.key), l = last(e.key);
+    const pct = Math.min(100, ((b || 0) / e.goal) * 100);
+    const done = pct >= 100;
+    const left = Math.max(0, e.goal - (b || 0));
+    return `<div class="goal${done ? " done" : ""}">
+      <div class="goal-top"><span class="goal-name">${e.name}</span><span class="badge">${done ? "Готово" : Math.floor(pct) + "%"}</span></div>
+      <div class="goal-val">${fmt(b, e.dec)} <small>/ ${e.goal} ${e.unit}</small></div>
+      <div class="bar"><i style="width:${pct}%"></i></div>
+      <div class="goal-foot"><span>Последняя: ${fmt(l, e.dec)}</span><span>${done ? "цель взята" : "ещё " + fmt(left, e.dec)}</span></div>
+    </div>`;
+  }).join("");
+}
+
+function renderTabs() {
+  $("tabs").innerHTML = `<button class="tab" type="button" data-ex="all" aria-pressed="${chartEx === "all"}">Вся цель</button>` + EX.map(e => `<button class="tab" type="button" data-ex="${e.key}" aria-pressed="${e.key === chartEx}">${e.name}</button>`).join("");
+}
+
+function renderChart() {
+  const e = chartEx === "all" ? { key: "all", name: "Вся цель", unit: "%", goal: 100, dec: 0 } : EX.find(x => x.key === chartEx);
+  const pts = chartEx === "all" ? sorted().map(s => ({ date: s.date, v: sessionPct(s) }))
+    : sorted().filter(s => num(s[e.key]) != null).map(s => ({ date: s.date, v: s[e.key] }));
+  if (!pts.length) { $("chart").innerHTML = `<div class="empty">Пока нет записей по упражнению «${e.name}». Сохрани первую тренировку, и здесь появится график.</div>`; return; }
+  const W = 520, H = 220, L = 40, R = 14, T = 16, B = 30;
+  const maxV = Math.max(e.goal, ...pts.map(p => p.v)) * 1.08;
+  const x = (i) => pts.length === 1 ? L + (W - L - R) / 2 : L + (i / (pts.length - 1)) * (W - L - R);
+  const y = (v) => T + (1 - v / maxV) * (H - T - B);
+  const ticks = [0, e.goal / 2, e.goal];
+  let g = "";
+  for (const t of ticks) g += `<line x1="${L}" x2="${W - R}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)" stroke-width="1"/><text x="${L - 6}" y="${y(t) + 4}" text-anchor="end">${fmt(t, e.dec && t % 1 ? 1 : 0)}</text>`;
+  g += `<line x1="${L}" x2="${W - R}" y1="${y(e.goal)}" y2="${y(e.goal)}" stroke="var(--good)" stroke-width="2" stroke-dasharray="6 5"/>`;
+  g += `<text x="${W - R}" y="${y(e.goal) - 6}" text-anchor="end" style="fill:var(--good);font-weight:700">цель ${e.goal}${e.key === "all" ? "%" : ""}</text>`;
+  const line = pts.map((p, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(p.v).toFixed(1)}`).join(" ");
+  const area = `${line} L${x(pts.length - 1).toFixed(1)},${y(0)} L${x(0).toFixed(1)},${y(0)} Z`;
+  g += `<path d="${area}" fill="var(--cape)" opacity=".12"/>`;
+  g += `<path d="${line}" fill="none" stroke="var(--cape)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+  pts.forEach((p, i) => { const end = i === pts.length - 1; g += `<circle cx="${x(i)}" cy="${y(p.v)}" r="${end ? 5 : 3}" fill="${end ? "var(--cape)" : "var(--surface)"}" stroke="var(--cape)" stroke-width="2"/>`; });
+  const lp = pts[pts.length - 1], li = pts.length - 1;
+  g += `<text x="${Math.min(x(li), W - R)}" y="${y(lp.v) - 10}" text-anchor="${pts.length === 1 ? "middle" : "end"}" style="fill:var(--ink);font-weight:700">${fmt(lp.v, e.dec)}</text>`;
+  g += `<text x="${x(0)}" y="${H - 8}" text-anchor="${pts.length === 1 ? "middle" : "start"}">${dLabel(pts[0].date)}</text>`;
+  if (pts.length > 1) g += `<text x="${x(li)}" y="${H - 8}" text-anchor="end">${dLabel(lp.date)}</text>`;
+  const first = pts[0].v, diff = lp.v - first;
+  const sum = pts.length > 1 ? `<p class="hint" style="margin-top:8px">${e.key === "all" ? "Процент выполнения всей цели за каждую тренировку. " : ""}С первой записи: ${diff >= 0 ? "+" : ""}${fmt(diff, e.dec)}${e.unit === "%" ? "%" : " " + e.unit} за ${pts.length} трен.</p>` : "";
+  $("chart").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="График: ${e.name}">${g}</svg>${sum}`;
+}
+
+function renderHistory() {
+  const s = sorted().reverse();
+  if (!s.length) { $("hist").innerHTML = `<div class="card empty">Здесь будут твои тренировки. Заполни форму выше — хватит одного упражнения.</div>`; return; }
+  // личные рекорды: значение больше всех предыдущих
+  const prs = new Set(); const run = {};
+  for (const x of sorted()) for (const e of EX) { const v = num(x[e.key]); if (v != null && (run[e.key] == null || v > run[e.key])) { run[e.key] = v; prs.add(x.id + e.key); } }
+  const list = showAll ? s : s.slice(0, 10);
+  let html = list.map(x => {
+    const chips = EX.filter(e => num(x[e.key]) != null).map(e => {
+      const extra = "";
+      return `<span class="chip${prs.has(x.id + e.key) ? " pr" : ""}">${e.name}: ${fmt(x[e.key], e.dec)}${e.key === "run" ? " км" : ""}${extra}</span>`;
+    }).join("");
+    return `<div class="entry">
+      <div class="entry-top"><span class="entry-date">${dLong(x.date)} <span class="badge${isFull(x) ? " full" : ""}">${isFull(x) ? "Путь пройден" : sessionPct(x) + "% цели"}</span></span><button class="del${armed === x.id ? " arm" : ""}" type="button" data-del="${x.id}">${armed === x.id ? "Точно удалить?" : "Удалить"}</button></div>
+      <div class="chips">${chips}</div>
+    </div>`;
+  }).join("");
+  if (s.length > 10) html += `<button class="more" type="button" id="more">${showAll ? "Свернуть" : "Показать все (" + s.length + ")"}</button>`;
+  $("hist").innerHTML = html;
+}
+
+function renderAll() { renderHero(); renderGoals(); renderTabs(); renderChart(); renderHistory(); }
+
+/* ---------- хранение на телефоне ---------- */
+function lsLoad() { try { const r = localStorage.getItem(LS_KEY); const v = r ? JSON.parse(r) : []; return Array.isArray(v) ? v : []; } catch { return []; } }
+function lsSave() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(sessions)); return true; }
+  catch { return false; }
+}
+async function saveSession(s) {
+  sessions.push(s);
+  if (!lsSave()) { sessions.pop(); throw new Error("save"); }
+  renderAll();
+}
+async function deleteSession(id) { sessions = sessions.filter(s => s.id !== id); lsSave(); renderAll(); }
+
+function init() {
+  sessions = lsLoad(); renderAll();
+  $("store").textContent = "История хранится на этом телефоне. Время от времени сохраняй резервную копию.";
+  if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+  if ("serviceWorker" in navigator && location.protocol.startsWith("http")) navigator.serviceWorker.register("sw.js").catch(() => {});
+}
+
+/* ---------- резервная копия ---------- */
+function backupMsg(text, ok) { const m = $("bMsg"); m.className = "msg " + (ok ? "ok" : "err"); m.textContent = text; }
+$("bExport").addEventListener("click", async () => {
+  const data = JSON.stringify({ app: "put-saitamy", version: 1, exported: new Date().toISOString(), sessions }, null, 1);
+  const name = "put-saitamy-" + today() + ".json";
+  const file = new File([data], name, { type: "application/json" });
+  try {
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], title: "Путь Сайтамы — резервная копия" });
+      backupMsg("Копия отправлена. Сохрани её в Файлы, на Диск или себе в мессенджер.", true); return;
+    }
+  } catch (e) { if (e && e.name === "AbortError") return; }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(file); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  backupMsg("Файл " + name + " сохранён в Загрузки.", true);
+});
+$("bImport").addEventListener("click", () => $("bFile").click());
+$("bFile").addEventListener("change", async (ev) => {
+  const f = ev.target.files && ev.target.files[0]; ev.target.value = "";
+  if (!f) return;
+  try {
+    const obj = JSON.parse(await f.text());
+    const list = Array.isArray(obj) ? obj : obj.sessions;
+    if (!Array.isArray(list)) throw new Error("format");
+    const ids = new Set(sessions.map(s => s.id)); let added = 0;
+    for (const x of list) {
+      if (!x || typeof x.date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(x.date)) continue;
+      const s = { id: String(x.id || ("s" + Math.random().toString(36).slice(2))), date: x.date, created: Number(x.created) || 0 };
+      for (const e of EX) { const v = Number(x[e.key]); s[e.key] = isFinite(v) && v > 0 ? v : null; }
+      if (ids.has(s.id)) continue; ids.add(s.id); sessions.push(s); added++;
+    }
+    lsSave(); renderAll();
+    backupMsg(added ? "Загружено тренировок: " + added + "." : "Новых тренировок в файле нет — всё уже есть.", true);
+  } catch { backupMsg("Не получилось прочитать файл. Выбери копию, сохранённую этим приложением (.json).", false); }
+});
+
+/* ---------- события ---------- */
+$("fDate").value = today();
+$("form").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  const msg = $("msg"); msg.className = "msg"; msg.textContent = "";
+  const read = (id) => { const v = parseFloat(String($(id).value).replace(",", ".")); return isFinite(v) && v > 0 ? v : null; };
+  const s = {
+    id: "s" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+    date: $("fDate").value || today(),
+    push: read("fPush"), squat: read("fSquat"), rope: read("fRope"), run: read("fRun"),
+    created: Date.now(),
+  };
+  if (s.push == null && s.squat == null && s.rope == null && s.run == null) {
+    msg.className = "msg err"; msg.textContent = "Заполни хотя бы одно упражнение."; return;
+  }
+  for (const k of ["push", "squat", "rope"]) if (s[k] != null) s[k] = Math.round(s[k]);
+  if (s.run != null) s.run = Math.round(s.run * 100) / 100;
+  const prevBest = Object.fromEntries(EX.map(e => [e.key, best(e.key)]));
+  $("save").disabled = true;
+  try {
+    await saveSession(s);
+    const prs = EX.filter(e => s[e.key] != null && (prevBest[e.key] == null || s[e.key] > prevBest[e.key])).map(e => e.name.toLowerCase());
+    msg.className = "msg ok";
+    const pct = sessionPct(s);
+    msg.textContent = isFull(s) ? "Все четыре цели за одну тренировку. Путь Сайтамы пройден!"
+      : `Сохранено: ${pct}% всей цели.` + (prs.length ? " Новый рекорд: " + prs.join(", ") + "!" : "");
+    for (const id of ["fPush", "fSquat", "fRope", "fRun"]) $(id).value = "";
+  } catch (e) {
+    msg.className = "msg err";
+    msg.textContent = "Не удалось сохранить: браузер не даёт записать данные. Проверь, что не включён приватный режим.";
+  } finally { $("save").disabled = false; }
+});
+
+$("tabs").addEventListener("click", (e) => { const b = e.target.closest("[data-ex]"); if (!b) return; chartEx = b.dataset.ex; renderTabs(); renderChart(); });
+$("hist").addEventListener("click", async (e) => {
+  if (e.target.id === "more") { showAll = !showAll; renderHistory(); return; }
+  const b = e.target.closest("[data-del]"); if (!b) return;
+  const id = b.dataset.del;
+  if (armed !== id) { armed = id; renderHistory(); setTimeout(() => { if (armed === id) { armed = null; renderHistory(); } }, 4000); return; }
+  armed = null;
+  try { await deleteSession(id); } catch { renderHistory(); }
+});
+
+init();
+</script>
+</body>
+</html>
